@@ -5,6 +5,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const uri = require("./Config/Database");
 const {verifyToken} = require('./Middlewares/CheckToken');
+require('dotenv').config();
 //middlewares
 app.use(cors());
 app.use(express.json());
@@ -20,13 +21,6 @@ async function run() {
     const database = client.db("Wedding");
     const collection = database.collection("Services");
     const reviewCollection = database.collection("Reviews");
-
-    /////
-    const dlt = async()=>{
-      const result = await collection.deleteMany({});
-      console.log(result);
-    }
-    // dlt();
 
     app.post("/services", async (req, res) => {
       const { title, email, price, imageUrl, shortDesc, fullDesc } = req.body;
@@ -140,7 +134,7 @@ async function run() {
     //JWT
     app.post("/jwt",(req,res)=>{
       const key = req.body.key;
-      const token = jwt.sign(key, 'This is a secret key');
+      const token = jwt.sign(key, process.env.SECRET_TOKEN);
       res.status(200).send({token});
     })
 
