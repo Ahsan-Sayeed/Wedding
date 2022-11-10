@@ -22,6 +22,10 @@ async function run() {
     const collection = database.collection("Services");
     const reviewCollection = database.collection("Reviews");
 
+    app.get("/",(req,res)=>{
+      res.status(200).send("HELLO vercel");
+    })
+
     app.post("/services", async (req, res) => {
       const { title, email, price, imageUrl, shortDesc, fullDesc } = req.body;
       const doc = { title, email, price, imageUrl, shortDesc, fullDesc, time:Date.now()};
