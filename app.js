@@ -2,7 +2,9 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 const uri = require("./Config/Database");
+const {verifyToken} = require('./Middlewares/CheckToken');
 //middlewares
 app.use(cors());
 app.use(express.json());
@@ -93,8 +95,12 @@ async function run() {
       const count = await reviewCollection.estimatedDocumentCount();
       res.status(200).send({ count, result });
     });
-    app.get("/review/profile/:uid", async (req, res) => {
-      const uid = req.params.uid;
+    app.get("/review/profile",verifyToken, async (req, res) => {
+      const uid = req.query.uid;
+      const decoded = req.decoded;
+      if(decoded!==uid){
+        req.status(403).send({message:'unauthorized'});
+      }
       const query = {uid:uid};
       const options = {};
       const cursor = reviewCollection.find(query, options);
@@ -129,6 +135,13 @@ async function run() {
       };
       const result = await reviewCollection.updateOne(filter, updateDoc, options);
       res.status(200).send(result);
+    })
+
+    //JWT
+    app.post("/jwt",(req,res)=>{
+      const key = req.body.key;
+      const token = jwt.sign(key, 'This is a secret key');
+      res.status(200).send({token});
     })
 
   } finally {
