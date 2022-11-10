@@ -30,7 +30,6 @@ async function run() {
       const { title, email, price, imageUrl, shortDesc, fullDesc } = req.body;
       const doc = { title, email, price, imageUrl, shortDesc, fullDesc, time:Date.now()};
       const result = await collection.insertOne(doc);
-      console.log(result);
       res.status(200).send(result);
     });
     app.get("/services", async (req, res) => {
@@ -129,7 +128,6 @@ async function run() {
         }
       };
       const result = await reviewCollection.updateOne(filter, updateDoc, options);
-      // console.log(filter,comment);
       res.status(200).send(result);
     })
 
